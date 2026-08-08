@@ -49,6 +49,13 @@ class ProviderRegistry:
                     default_base_url="https://opencode.ai/zen/v1",
                 )
             ),
+            ProviderType.AI_302: OpenAICompatibleProvider(
+                ProviderMetadata(
+                    id=ProviderType.AI_302,
+                    label="302.AI",
+                    default_base_url="https://api.302.ai/v1",
+                )
+            ),
         }
 
     def get(self, provider_type: ProviderType) -> LLMProvider:
