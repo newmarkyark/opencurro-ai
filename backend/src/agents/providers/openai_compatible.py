@@ -109,7 +109,7 @@ class OpenAICompatibleProvider(LLMProvider):
 
     def _headers(self, api_key: str) -> dict[str, str]:
         headers = {
-            "Authorization": f"Bearer {api_key}",
+            "Authorization": f"Bearer {api_key.strip()}",
             "Content-Type": "application/json",
         }
         if self.metadata.id == ProviderType.OPENROUTER:

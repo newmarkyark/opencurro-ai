@@ -70,7 +70,7 @@ export const useSettingsStore = create<SettingsState>()(
       providerCatalog: [],
       modelsByProvider: { openrouter: [], groq: [], nvidia: [], fireworks: [], ollama_cloud: [], opencode_zen: [], ai_302: [] },
       subAgents: [],
-      setProviderKey: (provider, value) => set((state) => ({ providerKeys: { ...state.providerKeys, [provider]: value } })),
+      setProviderKey: (provider, value) => set((state) => ({ providerKeys: { ...state.providerKeys, [provider]: value.trim() } })),
       setProviderBaseUrl: (provider, value) => set((state) => ({ providerBaseUrls: { ...state.providerBaseUrls, [provider]: value } })),
       setSelectedProvider: (provider) => set({ selectedProvider: provider, selectedModel: '' }),
       setSelectedModel: (model) => set({ selectedModel: model }),

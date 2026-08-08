@@ -1,5 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
+import httpx
+
 from src.agents.providers.registry import ProviderRegistry
 from src.schemas.providers import ProviderMetadata, ProviderModelsRequest, ProviderModelsResponse
 
@@ -22,6 +24,18 @@ def build_provider_router(provider_registry: ProviderRegistry) -> APIRouter:
             return ProviderModelsResponse(provider=request.provider, models=models)
         except HTTPException:
             raise
+        except httpx.HTTPStatusError as exc:
+            status = exc.response.status_code
+            if status in (401, 403):
+                raise HTTPException(
+                    status_code=400,
+                    detail=(
+                        "The API key was rejected by the provider (401/403). "
+                        "Double-check that the key is correct, complete, and has no "
+                        "surrounding spaces, then try again."
+                    ),
+                ) from exc
+            raise HTTPException(status_code=502, detail=f"Provider returned an error ({status}): {exc}") from exc
         except Exception as exc:
             raise HTTPException(status_code=500, detail=f"Failed to fetch models: {exc}") from exc
 
