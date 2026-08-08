@@ -154,7 +154,7 @@ export function useAgentChat() {
       history,
       provider: settings.selectedProvider,
       model: settings.selectedModel,
-      api_key: settings.providerKeys[settings.selectedProvider],
+      api_key: (settings.providerKeys[settings.selectedProvider] ?? '').trim(),
       base_url: settings.providerBaseUrls[settings.selectedProvider],
       sandbox: {
         api_key: settings.novitaApiKey,

@@ -35,7 +35,7 @@ export function useProviders() {
   }, [setProviderCatalog])
 
   const loadModels = async (provider: ProviderId = selectedProvider) => {
-    const apiKey = providerKeys[provider]
+    const apiKey = (providerKeys[provider] ?? '').trim()
     if (!apiKey) {
       setError(`Add a ${provider} API key first.`)
       return

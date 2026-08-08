@@ -1,4 +1,5 @@
 from src.agents.providers.base import LLMProvider
+from src.agents.providers.ai_302 import AI302Provider
 from src.agents.providers.openai_compatible import OpenAICompatibleProvider
 from src.agents.providers.ollama_cloud import OllamaCloudProvider
 from src.schemas.providers import ProviderMetadata, ProviderType
@@ -49,7 +50,7 @@ class ProviderRegistry:
                     default_base_url="https://opencode.ai/zen/v1",
                 )
             ),
-            ProviderType.AI_302: OpenAICompatibleProvider(
+            ProviderType.AI_302: AI302Provider(
                 ProviderMetadata(
                     id=ProviderType.AI_302,
                     label="302.AI",

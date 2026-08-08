@@ -100,10 +100,15 @@ export const useSettingsStore = create<SettingsState>()(
       name: 'novita-agent-settings',
       merge: (persisted, current) => {
         const p = persisted as Partial<SettingsState>
+        const persistedKeys = { ...current.providerKeys, ...p.providerKeys }
+        const trimmedKeys: Record<ProviderId, string> = {} as Record<ProviderId, string>
+        for (const key of Object.keys(persistedKeys) as ProviderId[]) {
+          trimmedKeys[key] = (persistedKeys[key] ?? '').trim()
+        }
         return {
           ...current,
           ...p,
-          providerKeys: { ...current.providerKeys, ...p.providerKeys },
+          providerKeys: trimmedKeys,
           providerBaseUrls: { ...current.providerBaseUrls, ...p.providerBaseUrls },
           modelsByProvider: { ...current.modelsByProvider, ...p.modelsByProvider },
         }
