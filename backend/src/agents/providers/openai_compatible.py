@@ -64,7 +64,8 @@ class OpenAICompatibleProvider(LLMProvider):
 
         async with httpx.AsyncClient(timeout=httpx.Timeout(90.0, connect=30.0)) as client:
             async with client.stream("POST", endpoint, headers=headers, json=payload) as response:
-                response.raise_for_status()
+                if response.status_code >= 400:
+                    raise await self._http_error(response, endpoint)
                 async for event in self._iter_sse_events(response):
                     if event == "[DONE]":
                         break
@@ -82,6 +83,30 @@ class OpenAICompatibleProvider(LLMProvider):
                             finish_reason=finish_reason,
                             raw=event,
                         )
+
+    async def _http_error(self, response: httpx.Response, endpoint: str) -> Exception:
+        body_text = ""
+        try:
+            raw = await response.aread()
+            body_any = json.loads(raw or b"{}")
+            if isinstance(body_any, dict):
+                err = body_any.get("error")
+                if isinstance(err, dict):
+                    body_text = str(err.get("message") or err.get("type") or "")
+                    if not body_text:
+                        body_text = str(err.get("code") or "")
+                elif err:
+                    body_text = str(err)
+        except Exception:
+            try:
+                body_text = response.text.strip()
+            except Exception:
+                body_text = ""
+
+        suffix = f" ({body_text.strip()})" if body_text.strip() else ""
+        return RuntimeError(
+            f"Provider returned HTTP {response.status_code} for {endpoint}{suffix}."
+        )
 
     async def _iter_sse_events(self, response: httpx.Response) -> AsyncGenerator[dict[str, Any] | str, None]:
         buffer = ""
