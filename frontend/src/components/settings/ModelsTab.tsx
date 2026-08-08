@@ -7,15 +7,16 @@ import { useSettingsStore } from '@/store/useSettingsStore'
 import { cn } from '@/lib/utils'
 import type { ProviderId } from '@/types/chat'
 
-const providers: ProviderId[] = ['openrouter', 'groq', 'nvidia', 'fireworks', 'ollama_cloud', 'opencode_zen']
+const providers: ProviderId[] = ['openrouter', 'groq', 'nvidia', 'fireworks', 'ollama_cloud', 'opencode_zen', '302_ai']
 
-const PROVIDER_META: Record<ProviderId, { description: string; iconClass: string }> = {
+const PROVIDER_META: Record<ProviderId, { description: string; iconClass: string; label?: string }> = {
   openrouter: { description: 'Access any foundation model', iconClass: 'bg-[rgba(59,130,246,0.12)] text-[#3b82f6]' },
   groq: { description: 'Fast inference API', iconClass: 'bg-[rgba(249,115,22,0.12)] text-[#f97316]' },
   nvidia: { description: 'NVIDIA AI models', iconClass: 'bg-[rgba(16,185,129,0.12)] text-[#10b981]' },
   fireworks: { description: 'Fast open-source model inference', iconClass: 'bg-[rgba(139,92,246,0.12)] text-[#8b5cf6]' },
   ollama_cloud: { description: 'Cloud-hosted open models via Ollama', iconClass: 'bg-[rgba(236,72,153,0.12)] text-[#ec4899]' },
   opencode_zen: { description: 'Curated coding models by OpenCode', iconClass: 'bg-[rgba(34,197,94,0.12)] text-[#22c55e]' },
+  '302_ai': { description: 'All-in-one hub for top AI models', iconClass: 'bg-[rgba(99,102,241,0.12)] text-[#6366f1]', label: '302.AI' },
 }
 
 export function ModelsTab() {
@@ -51,7 +52,7 @@ export function ModelsTab() {
               className={selectClass}
             >
               {providers.map((provider) => (
-                <option key={provider} value={provider}>{provider}</option>
+                <option key={provider} value={provider}>{PROVIDER_META[provider].label ?? provider}</option>
               ))}
             </select>
           </div>
@@ -96,7 +97,7 @@ export function ModelsTab() {
                       <svg viewBox="0 0 24 24" className="size-[18px]" strokeWidth={1.8}><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                     </div>
                     <div className="min-w-0">
-                      <div className="text-sm font-semibold capitalize text-[#34322d]">{provider}</div>
+                      <div className="text-sm font-semibold capitalize text-[#34322d]">{meta.label ?? provider}</div>
                       <div className="truncate text-[11px] text-[#858481]">{meta.description}</div>
                     </div>
                   </div>
@@ -112,7 +113,7 @@ export function ModelsTab() {
                 <input
                   value={providerKeys[provider] ?? ''}
                   onChange={(event) => setProviderKey(provider, event.target.value)}
-                  placeholder={`${provider.toUpperCase()} API key`}
+                  placeholder={`${(meta.label ?? provider).toUpperCase()} API key`}
                   className={inputClass}
                 />
                 <input
